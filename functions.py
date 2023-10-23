@@ -49,20 +49,32 @@ def create_vigenere_table():
 
     return table
 
-
-#  Vizionaire funcs
-
 def create_key_vigenere(input_message, key):
-    key = key.upper()  # Ensure the key is in uppercase
+    key = key.upper()  # Convert the key to upper case
     input_message = input_message.upper()
     chars = list(input_message)
     key_length = len(key)
-    key = key * (len(chars) // key_length) + key[:len(chars) % key_length]
 
-    return ''.join(key)
+    # Remove all characters except letters from the message and key
+    input_message_letters = ''.join(c for c in chars if c.isalpha())
+    key_letters = ''.join(c for c in key if c.isalpha())
+    key = key_letters * (len(input_message_letters) // key_length) + key_letters[
+                                                                     :len(input_message_letters) % key_length]
+
+    # Restore the characters in the original message
+    key_with_symbols = []
+    index = 0
+    for char in chars:
+        if char.isalpha():
+            key_with_symbols.append(key[index])
+            index += 1
+        else:
+            key_with_symbols.append(char)
+
+    return ''.join(key_with_symbols)
 
 
-def vigenere(input_message, key):
+def enchip_vigenere(input_message, key):
     table = create_vigenere_table()
     new_key = create_key_vigenere(input_message, key)
 
@@ -78,12 +90,11 @@ def vigenere(input_message, key):
 
     return ''.join(output_message)
 
-
-def de_key_vigenere(input_message, key):
+def dechip_vigenere(input_message, key):
     table = create_vigenere_table()
     new_key = create_key_vigenere(input_message, key)
 
-    chars = list(input_message)
+    chars = list(input_message.upper())
     output_message = [''] * len(chars)
 
     for i in range(len(chars)):
@@ -95,13 +106,5 @@ def de_key_vigenere(input_message, key):
 
     return ''.join(output_message)
 
-
-input_message = "ATTACKATDawn"
-key = "LEMON"
-result = vigenere(input_message, key)
-print(result)
-
-decrypted_message = de_key_vigenere(result, key)
-print(decrypted_message)
 
 
